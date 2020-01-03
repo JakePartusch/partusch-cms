@@ -6,9 +6,12 @@ import {
   Text,
   Button,
   Appbar,
-  Snackbar
+  Snackbar,
+  IconButton
 } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import dayjs from "dayjs";
 import {
   uploadImage,
   processImage,
@@ -27,6 +30,8 @@ export default function HomeScreen() {
   const [isMilo, setIsMilo] = useState(false);
   const [isOliver, setIsOliver] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [publishDate, setPublishDate] = useState(dayjs().format("MM/DD/YYYY"));
+  const [openDatePicker, setOpenDatepicker] = useState(false);
   const tokens = useContext(AuthContext);
 
   const pickImage = async () => {
@@ -64,13 +69,20 @@ export default function HomeScreen() {
         body,
         isMilo,
         isOliver,
-        images
+        images,
+        publishDate
       });
       await publishEntry(tokens, entryResponse.sys.id);
 
       setShowSuccess(true);
     } catch (e) {
       console.log("Unable to save", e);
+    }
+  };
+
+  const handlePublishedDateChange = newDate => {
+    if (newDate && typeof newDate === "object") {
+      setPublishDate(dayjs(newDate).format("MM/DD/YYYY"));
     }
   };
 
@@ -118,6 +130,39 @@ export default function HomeScreen() {
             style={styles.input}
             multiline
           />
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 20
+            }}
+          >
+            <TextInput
+              label="Publish Date"
+              onChangeText={value => setPublishDate(value)}
+              value={publishDate}
+              style={{ flexGrow: 1, marginRight: 5 }}
+              multiline
+            />
+            <IconButton
+              mode="outlined"
+              icon="calendar"
+              style={{ height: "100%" }}
+              onPress={() => setOpenDatepicker(true)}
+            ></IconButton>
+          </View>
+          {openDatePicker && (
+            <DateTimePicker
+              value={new Date()}
+              mode={"date"}
+              display="default"
+              onChange={(e, date) => {
+                setOpenDatepicker(false);
+                handlePublishedDateChange(date);
+              }}
+            />
+          )}
           <View style={styles.radio}>
             <Text>Milo</Text>
             <Checkbox
@@ -153,6 +198,7 @@ export default function HomeScreen() {
             setIsMilo(false);
             setIsOliver(false);
             setShowSuccess(false);
+            setPublishDate(dayjs().format("MM/DD/YYYY"));
           }
         }}
       >

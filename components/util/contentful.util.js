@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const uriToBlob = async uri => {
   const localFile = await fetch(uri);
   const imageBlob = await localFile.blob();
@@ -89,7 +91,7 @@ export const linkUploadToAsset = async (tokens, id, fileName, contentType) => {
 
 export const createEntry = async (
   tokens,
-  { title, body, isMilo, isOliver, images }
+  { title, body, isMilo, isOliver, images, publishDate }
 ) => {
   const oliverTag = {
     sys: {
@@ -120,7 +122,9 @@ export const createEntry = async (
         }))
       },
       publishDate: {
-        "en-US": new Date().toISOString()
+        "en-US": dayjs(publishDate)
+          .startOf("day")
+          .toISOString()
       },
       shortDescription: {
         "en-US": title
