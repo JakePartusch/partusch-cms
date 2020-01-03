@@ -50,6 +50,11 @@ const login = async setLoadingUserData => {
 
   const response = await AuthSession.startAsync({ authUrl });
 
+  if (response.type === "dismiss") {
+    // For some reason the first login is auto-dismissed. Workaround
+    return login(setLoadingUserData);
+  }
+
   if (response.type === "success") {
     if (response.params.error) {
       Alert(
@@ -79,6 +84,10 @@ export default function App(props) {
       setJwt(jwt);
     }, 250);
   };
+
+  useEffect(() => {
+    onLoginPress();
+  }, []);
 
   useEffect(() => {
     const fetchContentfulTokens = async () => {
