@@ -81,12 +81,6 @@ export default function App(props) {
   };
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      onLoginPress();
-    }
-  }, []);
-
-  useEffect(() => {
     const fetchContentfulTokens = async () => {
       const authResponse = await fetch(
         "https://hhhk8apnud.execute-api.us-east-1.amazonaws.com/dev/user/auth",
