@@ -1,0 +1,27 @@
+service: partusch-cms
+# app and org for use with dashboard.serverless.com
+app: partusch-cms
+org: jakepartusch
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  environment:
+    AUTH0_CLIENT_ID: ${file(./config/config.${self:provider.stage}.json):AUTH0_CLIENT_ID}
+    AUTH0_CLIENT_PUBLIC_KEY: ${file(./config/partusch-cms.${self:provider.stage}.pem)}
+    CONTENTFUL_ACCESS_TOKEN: ${file(./config/config.${self:provider.stage}.json):CONTENTFUL_ACCESS_TOKEN}
+    CONTENTFUL_SPACE_ID: ${file(./config/config.${self:provider.stage}.json):CONTENTFUL_SPACE_ID}
+functions:
+  auth:
+    handler: handler.auth
+    events:
+      - http:
+          path: /user/auth
+          method: get
+          authorizer: authorizer
+  authorizer:
+    handler: authorizer.authorizer
