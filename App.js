@@ -6,7 +6,8 @@ import HomeScreen from "./screens/HomeScreen";
 import {
   DefaultTheme,
   Provider as PaperProvider,
-  Button
+  Button,
+  ActivityIndicator
 } from "react-native-paper";
 
 import AuthContext from "./components/context/AuthContext";
@@ -35,7 +36,7 @@ const toQueryString = params => {
   );
 };
 
-const login = async () => {
+const login = async setLoadingUserData => {
   const redirectUrl = AuthSession.getRedirectUrl();
 
   const queryParams = toQueryString({
@@ -59,6 +60,8 @@ const login = async () => {
     }
 
     return response.params.id_token;
+  } else {
+    setLoadingUserData(false);
   }
 };
 
@@ -67,10 +70,14 @@ export default function App(props) {
   const [jwt, setJwt] = useState();
   const [tokens, setTokens] = useState();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loadingUserData, setLoadingUserData] = useState(false);
 
   const onLoginPress = async () => {
-    const jwt = await login();
-    setJwt(jwt);
+    setLoadingUserData(true);
+    setTimeout(async () => {
+      const jwt = await login(setLoadingUserData);
+      setJwt(jwt);
+    }, 250);
   };
 
   useEffect(() => {
@@ -92,6 +99,7 @@ export default function App(props) {
       const auth = await authResponse.json();
       setTokens(auth);
       setIsAuthenticated(true);
+      setLoadingUserData(false);
     };
     if (jwt) {
       fetchContentfulTokens();
@@ -105,6 +113,20 @@ export default function App(props) {
         onError={handleLoadingError}
         onFinish={() => handleFinishLoading(setLoadingComplete)}
       />
+    );
+  } else if (loadingUserData) {
+    return (
+      <PaperProvider theme={theme}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center"
+          }}
+        >
+          <ActivityIndicator size="large" />
+        </View>
+      </PaperProvider>
     );
   } else if (!isAuthenticated) {
     return (
