@@ -86,6 +86,16 @@ export default function HomeScreen() {
     }
   };
 
+  const resetForm = () => {
+    setTitle("");
+    setBody("");
+    setImages([]);
+    setIsMilo(false);
+    setIsOliver(false);
+    setShowSuccess(false);
+    setPublishDate(dayjs().format("MM/DD/YYYY"));
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.container}>
@@ -186,20 +196,10 @@ export default function HomeScreen() {
       </View>
       <Snackbar
         visible={showSuccess}
-        onDismiss={() => {
-          setShowSuccess(false);
-        }}
+        onDismiss={resetForm}
         action={{
-          label: "Start New Post",
-          onPress: () => {
-            setTitle("");
-            setBody("");
-            setImages([]);
-            setIsMilo(false);
-            setIsOliver(false);
-            setShowSuccess(false);
-            setPublishDate(dayjs().format("MM/DD/YYYY"));
-          }
+          label: "New Post",
+          onPress: resetForm
         }}
       >
         Successfully published!
