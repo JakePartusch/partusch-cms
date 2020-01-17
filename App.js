@@ -167,7 +167,6 @@ export default function App(props) {
       <View style={styles.container}>
         <PaperProvider theme={theme}>
           <AuthContext.Provider value={tokens}>
-            {/* <HomeScreen /> */}
             <BottomNavigation
               navigationState={{ index: screenIndex, routes }}
               onIndexChange={index => setScreen(index)}
