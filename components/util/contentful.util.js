@@ -163,3 +163,37 @@ export const publishEntry = async (tokens, id) => {
     }
   );
 };
+
+export const fetchEntries = async tokens => {
+  const response = await fetch(
+    `https://api.contentful.com/spaces/${tokens.spaceId}/environments/master/entries`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${tokens.accessToken}`
+      }
+    }
+  );
+  return await response.json();
+};
+
+export const deleteEntry = async (tokens, id) => {
+  await fetch(
+    `https://api.contentful.com/spaces/${tokens.spaceId}/environments/master/entries/${id}/published`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${tokens.accessToken}`
+      }
+    }
+  );
+  await fetch(
+    `https://api.contentful.com/spaces/${tokens.spaceId}/environments/master/entries/${id}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${tokens.accessToken}`
+      }
+    }
+  );
+};
