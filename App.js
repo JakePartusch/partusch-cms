@@ -3,11 +3,13 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 
 import HomeScreen from "./screens/HomeScreen";
+import ListScreen from "./screens/ListScreen";
 import {
   DefaultTheme,
   Provider as PaperProvider,
   Button,
-  ActivityIndicator
+  ActivityIndicator,
+  BottomNavigation
 } from "react-native-paper";
 
 import AuthContext from "./components/context/AuthContext";
@@ -70,12 +72,23 @@ const login = async setLoadingUserData => {
   }
 };
 
+const routes = [
+  { key: "create", title: "Create", icon: "lead-pencil" },
+  { key: "list", title: "List", icon: "format-list-bulleted" }
+];
+
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const [jwt, setJwt] = useState();
   const [tokens, setTokens] = useState();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loadingUserData, setLoadingUserData] = useState(false);
+  const [screenIndex, setScreen] = useState(1);
+
+  const renderScene = BottomNavigation.SceneMap({
+    create: HomeScreen,
+    list: ListScreen
+  });
 
   const onLoginPress = async () => {
     setLoadingUserData(true);
@@ -154,7 +167,12 @@ export default function App(props) {
       <View style={styles.container}>
         <PaperProvider theme={theme}>
           <AuthContext.Provider value={tokens}>
-            <HomeScreen />
+            {/* <HomeScreen /> */}
+            <BottomNavigation
+              navigationState={{ index: screenIndex, routes }}
+              onIndexChange={index => setScreen(index)}
+              renderScene={renderScene}
+            />
           </AuthContext.Provider>
         </PaperProvider>
       </View>
